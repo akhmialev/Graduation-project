@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load news_site_tags %}
+{% load static %}
+{% block body %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<br/></br/>
+<div class="container">
+    <div class="col-md-8 offset-md-2">
+
+        Найденно статей - {{ results.count }}
+        {% for news in results %}
+        <div align="left">Дата создания - {{ news.time_create }}</div>
+        <div align="left">Навзание статьи - {{news.title}}</div>
+        <hr>
+        <p><img src="{{ news.photo.url }}" width="280" height="220" align="left" vspace="10" hspace="10"></p>
+        <div align="right"><a class="btn btn-primary" href="{{ news.get_absolute_url }}">Читать новость</a>
+            <div align="right"><p></p><a class="btn btn-primary" href="{% url 'back' %}">Назад</a></div>
+            </p>
+        </div>
+
+        {% empty %}
+        <div align="">
+            <hr>
+            <img src=" /media/oops.jpeg " width="380" height="320" align="left" vspace="10" hspace="10">
+            <div align="right"><h1>Ничего не найденно</h1></div>
+            <div align="right">
+                <a class="btn btn-primary" href="{% url 'back' %}">Назад</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+</body>
+</html>
+{% endblock %}
