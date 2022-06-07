@@ -46,12 +46,13 @@
             </a>
             <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item" href="{% url 'about' %}">О сайте</a>
-                    <a class="collapse-item" href="{% url 'add_news' %}">Добавить новость</a>
                     <a class="collapse-item" href="{% url 'feedback' %}">Обратная свзяь</a>
+                    {% if request.user.is_authenticated %}
+                    <a class="collapse-item" href="{% url 'add_news' %}">Добавить новость</a>
+                    {% else %}
                     <a class="collapse-item" href="{% url 'login' %}">Войти</a>
                     <a class="collapse-item" href="{% url 'register' %}">Регистрация</a>
-
+                    {% endif %}
                 </div>
             </div>
         </li>
@@ -75,6 +76,58 @@
             <a class="btn btn-primary" href="{% url 'back' %}">Назад</a>
         </div>
         </p>
+        {% if request.user.is_authenticated %}
+        <div >
+            <h3 >
+                <span></span>Оставить комменатрий</h3>
+            <form action="{% url 'comment' news.id %}" method="post" class="mt-4" >
+                {% csrf_token %}
+                <input type="hidden" name="parent" value="">
+                <div >
+                    <label >
+                        Ваш комментарий *
+                    </label>
+                    <textarea class="form-control border" rows="5" name="text"></textarea>
+                </div>
+                <div class="d-sm-flex">
+                    <div class="col-sm-6 form-group p-0 editContent">
+                        <label for="contactusername" class="editContent">
+                            Имя *
+                        </label>
+                        <input type="text" class="form-control border" name="name"
+                               id="contactusername" required="">
+                    </div>
+                    <div class="col-sm-6 form-group ml-sm-3 editContent">
+                        <label for="contactemail" class="editContent">
+                            Email *
+                        </label>
+                        <input type="email" class="form-control border" name="email"
+                               id="contactemail" required="">
+                    </div>
+                </div>
+                <button type="submit"
+                        class="mt-4 btn btn-primary btn-block py-3">
+                    Отправить
+                </button>
+            </form>
+        </div>
+        {% else %}
+        <h3 align="center">Для того чтобы оставить комментарий авторизуйтесь</h3>
+
+        {% endif %}
+            <p></p>
+<!--        т.к. в models в post(related_name='comments') то я тут пишу news.comments.all-->
+<!--        если бы не было related_name='comments' надо было писать news.comment_set.all(название таблицы в бд comment)-->
+        {% if request.user.is_authenticated %}
+        {% for c in news.comments.all %}
+            <div  >
+                <h6 align="left" ><b>Пользователь: {{ c.name }}</b></h6>
+                <h6 align="left" ><b>Время создания: {{ c.created }}</b></h6>
+                <p align="left" >Комментарий: {{ c.text }}</p>
+                <hr>
+            </div>
+        {% endfor %}
+        {% endif %}
     </ul>
 </div>
 

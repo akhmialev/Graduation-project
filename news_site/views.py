@@ -1,11 +1,12 @@
 from django.contrib.auth import logout, login
 from django.contrib.auth.views import LoginView, AuthenticationForm
 from django.http import Http404
-from django.shortcuts import render, HttpResponse, redirect
+from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import ListView, DeleteView, CreateView
 
-from .forms import AddNews, UserForm
+from .forms import AddNews, UserForm, CommentForm
 from .models import *
 from .utils import MyMixin
 
@@ -30,11 +31,6 @@ class HomePage(MyMixin, ListView):
 def back(request):
     return redirect('/')
 
-def about(request):
-    cotenxt = {
-        'title': 'О сайте'
-    }
-    return render(request,'about.html', context=cotenxt)
 
 def feedback(request):
     context = {
@@ -85,6 +81,7 @@ class RegisterUser(CreateView):
         user = form.save()
         login(self.request,user)
         return redirect('home')
+
 # Просмотр новостей
 class ShowNews(DeleteView):
     model = News
@@ -114,4 +111,15 @@ class ShowCategory(ListView):
     def get_queryset(self):
         return News.objects.filter(category__slug=self.kwargs['cat_slug'], is_published=True)
 
+
+# Добавление комментария
+class AddComment(View):
+    def post(self, request, pk):
+        form = CommentForm(request.POST)
+        news = News.objects.get(id=pk)
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.post = news
+            form.save()
+        return redirect(news.get_absolute_url())
 

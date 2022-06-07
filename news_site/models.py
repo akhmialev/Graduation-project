@@ -16,6 +16,7 @@ class Category(models.Model):
         verbose_name = 'Категорию'
         verbose_name_plural = 'Категории'
 
+
 class News(models.Model):
     title = models.CharField(max_length=255, verbose_name='Название')
     slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name='URL')
@@ -36,3 +37,20 @@ class News(models.Model):
         verbose_name = 'Новость'
         verbose_name_plural = 'Новости'
         ordering = ['time_create', 'title']
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(News, related_name='comments', on_delete=models.CASCADE, verbose_name='Пост')
+    name = models.CharField(max_length=180, verbose_name='Имя')
+    email = models.EmailField(verbose_name='Email')
+    text = models.TextField(verbose_name='Текс')
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Созданно')
+    active = models.BooleanField(default=True, verbose_name='Опубликованно')
+
+    class Meta:
+        verbose_name = 'Коментарий'
+        verbose_name_plural = 'Коментарии'
+        ordering = ('created',)
+
+    def __str__(self):
+        return f'{self.name}'

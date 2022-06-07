@@ -13,7 +13,14 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
     list_display_links = ('id', 'name')
     search_fields = ('id',)
-    prepopulated_fields = {'slug': ('name',)}
+    # prepopulated_fields = {'slug': ('name',)}
+
+class CommentAdmin(admin.AdminSite):
+    list_display = ('name', 'email', 'post', 'created', 'active')
+    list_filter = ('active', 'created')
+    search_fields = ('name', 'email', 'text')
+
 
 admin.site.register(News, NewsAdmin)
 admin.site.register(Category, CategoryAdmin)
+admin.site.register(Comment, CategoryAdmin)
