@@ -31,6 +31,18 @@ class HomePage(MyMixin, ListView):
 def back(request):
     return redirect('/')
 
+# Функция поиска
+def search(request):
+    if request.method == 'GET':
+        query = request.GET.get('search')
+        if query == '':
+            query = 'None'
+        results = News.objects.filter(title__icontains=query)
+        context = {
+            'query': query,
+            'results': results}
+        return render(request, 'search.html', context=context)
+
 
 def feedback(request):
     context = {
